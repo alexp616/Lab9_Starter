@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+<script>
+  window.TrackJS && TrackJS.install({ 
+    token: "f711bae1d4b64d0181e8b8a7c370416f",
+    application: "lab-9"
+    // for more configuration options, see https://docs.trackjs.com
+  });
+</script>
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -88,6 +97,14 @@
   </main>
 
   <script>
+    class CalculatorError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = 'CalculatorError';
+      }
+    }
+
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,13 +112,87 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      try {
+        if (!Number(firstNum)) {
+          throw(new CalculatorError("First number isn't valid!"));
+        }
+        if (!Number(secondNum)) {
+          throw(new CalculatorError("Second number isn't valid!"));
+        }
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      } catch (error) {
+        output.innerHTML = 'Invalid Input!';
+        console.error(error instanceof CalculatorError ? `Calculator error: ${error.message}` : error);
+      } finally {
+        console.log('Submit button pressed');
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    let logBtn = errorBtns[0];
+    let errBtn = errorBtns[1];
+    let countBtn = errorBtns[2];
+    let warnBtn = errorBtns[3];
+    let assertBtn = errorBtns[4];
+    let clearBtn = errorBtns[5];
+    let dirBtn = errorBtns[6];
+    let dirxmlBtn = errorBtns[7];
+    let groupstartBtn = errorBtns[8];
+    let groupendBtn = errorBtns[9];
+    let tableBtn = errorBtns[10];
+    let starttimerBtn = errorBtns[11];
+    let endtimerBtn = errorBtns[12];
+    let traceBtn = errorBtns[13];
+    let globerrBtn = errorBtns[14];
+
+    logBtn.onclick = () => console.log(`Logging`);
+    errBtn.onclick = () => console.error(`Error`);
+    countBtn.onclick = () => console.count('Current count');
+    warnBtn.onclick = () => console.warn('Warning');
+    assertBtn.onclick = () => console.assert(1 == 2, '1 is not equal to 2!');
+    clearBtn.onclick = console.clear;
+    dirBtn.onclick = () => console.dir(document.body);
+    dirxmlBtn.onclick = () => console.dirxml(document.body);
+    groupstartBtn.onclick = () => console.group('Group');
+    groupendBtn.onclick = () => console.groupEnd('Group');
+
+    // Taken from https://developer.chrome.com/docs/devtools/console/api#group:~:text=var%20people%20%3D%20%5B%0A%C2%A0%20%7B%0A%C2%A0%20%C2%A0%20first%3A%20%27Ren%C3%A9%27%2C%0A%C2%A0%20%C2%A0%20last%3A%20%27Magritte%27%2C%0A%C2%A0%20%7D%2C%0A%C2%A0%20%7B%0A%C2%A0%20%C2%A0%20first%3A%20%27Chaim%27%2C%0A%C2%A0%20%C2%A0%20last%3A%20%27Soutine%27%2C%0A%C2%A0%20%C2%A0%20birthday%3A%20%2718930113%27%2C%0A%C2%A0%20%7D%2C%0A%C2%A0%20%7B%0A%C2%A0%20%C2%A0%20first%3A%20%27Henri%27%2C%0A%C2%A0%20%C2%A0%20last%3A%20%27Matisse%27%2C%0A%C2%A0%20%7D%0A%5D%3B
+    var people = [
+      {
+        first: 'René',
+        last: 'Magritte',
+      },
+      {
+        first: 'Chaim',
+        last: 'Soutine',
+        birthday: '18930113',
+      },
+      {
+        first: 'Henri',
+        last: 'Matisse',
+      }
+    ];
+    tableBtn.onclick = () => console.table(people);
+
+    starttimerBtn.onclick = () => console.time('timer');
+    endtimerBtn.onclick = () => console.timeEnd('timer');
+
+    first = () => second();
+    second = () => third();
+    third = () => console.trace();
+    traceBtn.onclick = first;
+    
+    globerrBtn.onclick = () => {
+      try {
+        batman
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
   </script>
 </body>
 
